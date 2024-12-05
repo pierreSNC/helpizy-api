@@ -1,24 +1,18 @@
-const express = require('express')
-const {Sequelize} = require("sequelize");
-const app = express()
-const port = 3000
+const express = require("express");
+const bodyParser = require("body-parser");
+const postRoutes = require("./routes/posts"); // Importer les routes des posts
 
-const sequelize = new Sequelize('helpizy', 'root', '', {
-    host: 'localhost',
-    dialect: 'mysql'
-});
+const app = express();
+const port = 3000;
 
-const checkDbConnexion = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-    } catch (error) {
-        console.error('Unable to connect to the database:', error);
-    }
-};
+// Middleware
+app.use(bodyParser.json()); // Pour parser les JSON dans les requêtes
 
-checkDbConnexion();
+// Routes
+app.use("/api", postRoutes); // Préfixer les routes par `/api`
+
+
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+    console.log(`Server is running on http://localhost:${port}`);
+});
