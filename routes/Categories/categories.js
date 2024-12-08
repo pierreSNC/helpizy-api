@@ -3,7 +3,6 @@ const CategoryController = require("../../controllers/Categories/CategoryControl
 
 const router = express.Router();
 
-// Routes
 router.get("/categories", CategoryController.getAll); // Récupérer toutes les catégories
 router.get("/category/:id", CategoryController.getOne); // Récupérer une catégorie par ID
 router.post("/category", CategoryController.create); // Créer une catégorie

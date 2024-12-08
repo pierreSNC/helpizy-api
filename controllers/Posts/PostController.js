@@ -1,4 +1,4 @@
-const { Post, PostLang } = require("../../models/Posts");
+const { Post, PostLang } = require("../../models");
 
 const PostController = {
     // Récupérer tous les articles
