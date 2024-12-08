@@ -22,7 +22,7 @@ module.exports = (sequelize) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
-                    isIn: [[1, 2]], // Langues supportées : 1 (fr), 2 (en)
+                    isIn: [[1, 2]]
                 },
             },
             title: {

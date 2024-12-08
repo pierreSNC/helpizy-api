@@ -1,16 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const postRoutes = require("./routes/posts"); // Importer les routes des posts
+const postsRoutes = require("./routes/posts"); // Importer les routes des posts
+const categoriesRoutes = require("./routes/Categories/categories");
 
 const app = express();
 const port = 3000;
 
 // Middleware
-app.use(bodyParser.json()); // Pour parser les JSON dans les requêtes
+app.use(bodyParser.json());
 
 // Routes
-app.use("/api", postRoutes); // Préfixer les routes par `/api`
-
+app.use("/api", postsRoutes);
+app.use("/api", categoriesRoutes);
 
 
 app.listen(port, () => {
