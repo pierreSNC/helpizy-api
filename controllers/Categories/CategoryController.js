@@ -50,7 +50,7 @@ const CategoryController = {
             if (translations && Array.isArray(translations)) {
                 const categoryLangs = translations.map((lang) => ({
                     ...lang,
-                    id_category: category.id,
+                    id_category: category.id_category,
                 }));
                 await CategoryLang.bulkCreate(categoryLangs);
             }

@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
                 allowNull: false,
                 references: {
                     model: "Post",
-                    key: "id",
+                    key: "id_post",
                 },
             },
             id_lang: {

@@ -36,7 +36,7 @@ const PostController = {
             if (translations && Array.isArray(translations)) {
                 const postLangs = translations.map((lang) => ({
                     ...lang,
-                    id_post: post.id,
+                    id_post: post.id_post,
                 }));
                 await PostLang.bulkCreate(postLangs);
             }

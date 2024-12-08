@@ -4,7 +4,7 @@ module.exports = (sequelize) => {
     return sequelize.define(
         "Post",
         {
-            id: {
+            id_post: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
