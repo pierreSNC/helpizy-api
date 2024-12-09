@@ -8,6 +8,7 @@ const CategoryLangModel = require("./Categories/CategoryLang");
 const AuthorModel = require("./Authors/Authors");
 const QuestionModel = require("./Questions/Question");
 const QuestionLangModel = require("./Questions/QuestionLang");
+const UserModel = require("./Users/User");
 
 const Post = PostModel(sequelize, DataTypes);
 const PostLang = PostLangModel(sequelize, DataTypes);
@@ -16,8 +17,8 @@ const CategoryLang = CategoryLangModel(sequelize, DataTypes);
 const Author = AuthorModel(sequelize, DataTypes);
 const Question = QuestionModel(sequelize, DataTypes);
 const QuestionLang = QuestionLangModel(sequelize, DataTypes);
+const User = UserModel(sequelize, DataTypes);
 
-// Définition des associations pour chaque modèle
 
 Post.hasMany(PostLang, { foreignKey: "id_post", as: "translations" });
 PostLang.belongsTo(Post, { foreignKey: "id_post", as: "post" });
@@ -40,4 +41,5 @@ module.exports = {
     Author,
     Question,
     QuestionLang,
+    User
 };
