@@ -54,6 +54,35 @@ const UserController = {
             res.status(500).json({ message: "Error logging in user" });
         }
     },
+
+    update: async (req, res) => {
+        const { id } = req.params;
+        const { email, lastname, firstname, profil_picture, password, allow_notification } = req.body;
+
+        try {
+            const user = await User.findByPk(id);
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            if (email) user.email = email;
+            if (lastname) user.lastname = lastname;
+            if (firstname) user.firstname = firstname;
+            if (profil_picture) user.profil_picture = profil_picture;
+            if (typeof allow_notification !== "undefined") user.allow_notification = allow_notification;
+
+            if (password) {
+                user.password = await bcrypt.hash(password, 10);
+            }
+
+            await user.save();
+
+            res.status(200).json({ message: "User updated successfully", user });
+        } catch (error) {
+            console.error("Error updating user:", error);
+            res.status(500).json({ message: "Error updating user" });
+        }
+    },
 };
 
 module.exports = UserController;
