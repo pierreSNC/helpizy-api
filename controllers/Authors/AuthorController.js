@@ -4,7 +4,7 @@ const AuthorController = {
     getAll: async (req, res) => {
         try {
             const authors = await Author.findAll({
-                include: { association: "post" },
+                include: { association: "posts" },
             });
             res.status(200).json(authors);
         } catch (error) {

@@ -1,7 +1,6 @@
 const { Post, PostLang } = require("../../models");
 
 const PostController = {
-    // Récupérer tous les articles
     getAll: async (req, res) => {
         try {
             const posts = await Post.findAll({
