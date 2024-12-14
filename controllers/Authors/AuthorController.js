@@ -1,5 +1,9 @@
 const { Author } = require("../../models");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require('dotenv').config();
 
+const SECRET_KEY = process.env.SECRET_KEY;
 const AuthorController = {
     getAll: async (req, res) => {
         try {
@@ -89,6 +93,35 @@ const AuthorController = {
             res.status(500).json({ message: "Error deleting author" });
         }
     },
+
+    login: async (req, res) => {
+        const { email, password } = req.body;
+
+        try {
+            const author = await Author.findOne({ where: { email } });
+
+            if (!author) {
+                return res.status(400).json({ message: "Invalid credentials" });
+            }
+
+            const isMatch = await bcrypt.compare(password, author.password);
+
+            if (!isMatch) {
+                return res.status(400).json({ message: "Invalid credentials" });
+            }
+
+            const token = jwt.sign({ id_author: author.id_author, email: author.email, role: author.role }, SECRET_KEY, { expiresIn: "1h" });
+
+            res.status(200).json({ token });
+        } catch (error) {
+            console.error("Error logging in author:", error);
+            res.status(500).json({ message: "Error logging in" });
+        }
+    },
+
+    logout: (req, res) => {
+        res.status(200).json({ message: "Logged out successfully" });
+    }
 };
 
 module.exports = AuthorController;

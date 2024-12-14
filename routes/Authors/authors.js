@@ -163,4 +163,50 @@ router.patch("/author/:id", AuthorController.update);
  */
 router.delete("/author/:id", AuthorController.delete);
 
+/**
+ * @swagger
+ * /api/author/login:
+ *   post:
+ *     tags:
+ *       - Author
+ *     description: Login an author and return a JWT token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Author logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Invalid credentials
+ */
+router.post("/author/login", AuthorController.login);
+
+/**
+ * @swagger
+ * /api/author/logout:
+ *   post:
+ *     tags:
+ *       - Author
+ *     description: Logout an author by removing their JWT token from client-side storage
+ *     responses:
+ *       200:
+ *         description: Author logged out successfully
+ */
+router.post("/author/logout", AuthorController.logout);
+
 module.exports = router;
