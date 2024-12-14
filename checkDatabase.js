@@ -1,11 +1,12 @@
 const { Sequelize } = require("sequelize");
 const mysql = require("mysql2/promise")
+require('dotenv').config();
 
-const dbName = "helpizy";
-const dbUser = "root";
-const dbPassword = "";
-const dbHost = "localhost";
-const dbDialect = "mysql";
+const dbHost = process.env.DB_HOST;
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASSWORD;
+const dbName = process.env.DB_NAME;
+const dbDialect = process.env.DB_DIALECT;
 
 const createDatabase = async () => {
     try {
