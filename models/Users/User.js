@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         role: {
             type: DataTypes.STRING,
-            defaultValue: "user", // Exemple : user/admin
+            defaultValue: "user",
         },
     },
     {

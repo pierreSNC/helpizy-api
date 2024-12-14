@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { swaggerUi, swaggerDocs } = require('./swagger/swagger');
+
 const postsRoutes = require("./routes/Posts/posts");
 const categoriesRoutes = require("./routes/Categories/categories");
 const authorsRoutes = require("./routes/Authors/authors");
@@ -11,6 +13,7 @@ const port = 3000;
 
 // Middleware
 app.use(bodyParser.json());
+app.use('/helpizy/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Routes
 app.use("/api", postsRoutes);

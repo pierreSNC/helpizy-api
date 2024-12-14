@@ -7,7 +7,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 const UserController = {
     register: async (req, res) => {
-        const { email, lastname, firstname, profile_picture, password, allow_notification } = req.body;
+        const { email, lastname, firstname, profile_picture, password, allow_notification, role } = req.body;
 
         try {
             const existingUser = await User.findOne({ where: { email } });
@@ -24,10 +24,11 @@ const UserController = {
                 profile_picture,
                 password: hashedPassword,
                 allow_notification,
+                role
             });
 
             const token = jwt.sign(
-                { id_user: newUser.id_user, email: newUser.email },
+                { id_user: newUser.id_user, email: newUser.email, role: newUser.role },
                 SECRET_KEY,
                 { expiresIn: "1h" }
             );
@@ -41,6 +42,7 @@ const UserController = {
                     lastname: newUser.lastname,
                     firstname: newUser.firstname,
                     profile_picture: newUser.profile_picture,
+                    role: newUser.role
                 },
             });
         } catch (error) {
@@ -65,7 +67,7 @@ const UserController = {
                 return res.status(401).json({ message: "Invalid credentials" });
             }
 
-            const token = jwt.sign({ id_user: user.id_user, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
+            const token = jwt.sign({ id_user: user.id_user, email: user.email, role: user.role }, SECRET_KEY, { expiresIn: "1h" });
 
             res.status(200).json({ message: "Login successful", token });
         } catch (error) {
@@ -76,10 +78,8 @@ const UserController = {
 
     getAll: async (req, res) => {
         try {
-            // Récupérer tous les utilisateurs
             const users = await User.findAll();
 
-            // Vérifier s'il y a des utilisateurs
             if (!users || users.length === 0) {
                 return res.status(404).json({ message: "No users found" });
             }
@@ -93,8 +93,6 @@ const UserController = {
 
     getProfile: async (req, res) => {
         const { id_user } = req.user;
-        console.log("req.user:", req.user);
-        console.log(id_user)
         try {
             const user = await User.findByPk(id_user, {
                 attributes: { exclude: ["password"] },
@@ -122,7 +120,7 @@ const UserController = {
 
     update: async (req, res) => {
         const { id } = req.params;
-        const { email, lastname, firstname, profile_picture, password, allow_notification } = req.body;
+        const { email, lastname, firstname, profile_picture, password, allow_notification, role } = req.body;
 
         try {
             const user = await User.findByPk(id);
@@ -134,6 +132,7 @@ const UserController = {
             if (lastname) user.lastname = lastname;
             if (firstname) user.firstname = firstname;
             if (profile_picture) user.profile_picture = profile_picture;
+            if (role) user.role = role;
             if (typeof allow_notification !== "undefined") user.allow_notification = allow_notification;
 
             if (password) {
