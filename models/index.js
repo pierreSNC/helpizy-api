@@ -20,17 +20,17 @@ const User = UserModel(sequelize, DataTypes);
 const PostLang = PostLangModel(sequelize, DataTypes);
 
 
-Post.hasMany(PostLang, { foreignKey: "id_post", as: "translations" });
 PostLang.belongsTo(Post, { foreignKey: "id_post", as: "post" });
+Post.hasMany(PostLang, { foreignKey: "id_post", as: "translations" });
 
-Category.hasMany(CategoryLang, { foreignKey: "id_category", as: "translations" });
 CategoryLang.belongsTo(Category, { foreignKey: "id_category", as: "category" });
+Category.hasMany(CategoryLang, { foreignKey: "id_category", as: "translations" });
 
 Author.hasMany(Post, { foreignKey: "id_author", as: "posts" });
 Post.belongsTo(Author, { foreignKey: "id_author", as: "author" });
 
-Question.hasMany(QuestionLang, { foreignKey: "id_question", as: "translations" });
 QuestionLang.belongsTo(Question, { foreignKey: "id_question", as: "question" });
+Question.hasMany(QuestionLang, { foreignKey: "id_question", as: "translations" });
 
 module.exports = {
     sequelize,
