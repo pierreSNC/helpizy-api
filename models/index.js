@@ -11,13 +11,13 @@ const QuestionLangModel = require("./Questions/QuestionLang");
 const UserModel = require("./Users/User");
 
 const Post = PostModel(sequelize, DataTypes);
-const PostLang = PostLangModel(sequelize, DataTypes);
 const Category = CategoryModel(sequelize, DataTypes);
 const CategoryLang = CategoryLangModel(sequelize, DataTypes);
 const Author = AuthorModel(sequelize, DataTypes);
 const Question = QuestionModel(sequelize, DataTypes);
 const QuestionLang = QuestionLangModel(sequelize, DataTypes);
 const User = UserModel(sequelize, DataTypes);
+const PostLang = PostLangModel(sequelize, DataTypes);
 
 
 Post.hasMany(PostLang, { foreignKey: "id_post", as: "translations" });
