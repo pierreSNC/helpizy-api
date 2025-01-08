@@ -38,6 +38,7 @@ module.exports = (sequelize) => {
         {
             timestamps: true,
             tableName: "post",
+            freezeTableName: true,
         }
     );
 };
