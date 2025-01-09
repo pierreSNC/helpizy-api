@@ -12,7 +12,7 @@ const usersRoutes = require("./routes/Users/users");
 
 const app = express();
 app.use(cors());
-
+app.options('*', cors());
 const port = 3000;
 
 // Middleware
