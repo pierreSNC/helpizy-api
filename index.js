@@ -1,5 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require('cors');
+
 const { swaggerUi, swaggerDocs } = require('./swagger/swagger');
 
 const postsRoutes = require("./routes/Posts/posts");
@@ -9,6 +11,8 @@ const questionsRoutes = require("./routes/Questions/questions");
 const usersRoutes = require("./routes/Users/users");
 
 const app = express();
+app.use(cors());
+
 const port = 3000;
 
 // Middleware
