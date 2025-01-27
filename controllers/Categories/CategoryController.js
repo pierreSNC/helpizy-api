@@ -110,7 +110,7 @@ const CategoryController = {
             console.error("Error creating category:", error);
             res.status(500).json({ message: "Error creating category" });
         }
-    }
+    },
 
 
 // Ajouter la route pour accepter l'image avec les autres données
