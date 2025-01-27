@@ -64,44 +64,45 @@ const CategoryController = {
     },
 
     create: async (req, res) => {
-        const { active, translations } = req.body;
-        console.log(req.body)
-        const file = req.file; // Obtenir le fichier téléchargé par Multer
+        const { active, translations } = req.body; // active est déjà une chaîne, translations est une chaîne JSON
 
+        // Parse les traductions JSON pour les convertir en objet
+        let parsedTranslations;
+        try {
+            parsedTranslations = JSON.parse(translations);  // Convertir la chaîne JSON en tableau d'objets
+        } catch (error) {
+            return res.status(400).json({ message: 'Erreur lors du parsing des traductions.' });
+        }
+
+        // Vérification du fichier téléchargé
+        const file = req.file;
         if (!file) {
             return res.status(400).json({ message: 'L\'image est requise.' });
         }
 
         try {
-            // Créer la catégorie sans l'image
+            // Créer la catégorie sans l'image initialement
             const category = await Category.create({
                 active,
-                thumbnail: "", // Mettre une valeur vide pour l'instant
+                thumbnail: "", // L'image sera ajoutée plus tard
             });
 
-            // Renommer l'image après la création de la catégorie avec l'ID de la catégorie
+            // Renommer et déplacer l'image
             const newFileName = `${category.id_category}.jpg`;
             const newFilePath = path.join('uploads/category', newFileName);
+            fs.renameSync(file.path, newFilePath);
 
-            // Renommer le fichier (enregistrer l'image avec le nom basé sur l'ID de la catégorie)
-            fs.renameSync(file.path, newFilePath); // Renommer et déplacer le fichier
-
-            // Mettre à jour la catégorie avec l'URL de l'image
+            // Mettre à jour l'URL de l'image dans la base de données
             const thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/category/${newFileName}`;
             await category.update({ thumbnail: thumbnailUrl });
 
-            // Vérifier que les traductions existent et les insérer dans la BDD
-            if (translations && Array.isArray(translations)) {
-                const categoryLangs = translations.map((lang) => ({
+            // Vérifier et insérer les traductions
+            if (parsedTranslations && Array.isArray(parsedTranslations)) {
+                const categoryLangs = parsedTranslations.map((lang) => ({
                     ...lang,
-                    id_category: category.id_category,
+                    id_category: category.id_category,  // Lier chaque traduction à la catégorie
                 }));
-                console.log(categoryLangs)
-                // Créer les traductions dans la base de données
-                await CategoryLang.bulkCreate(categoryLangs);
-            } else {
-                // Si aucune traduction n'est envoyée, envoyer un message de validation
-                console.log("Aucune traduction envoyée");
+                await CategoryLang.bulkCreate(categoryLangs);  // Insérer toutes les traductions dans la table
             }
 
             res.status(201).json({ message: "Category created successfully", category });
@@ -109,7 +110,8 @@ const CategoryController = {
             console.error("Error creating category:", error);
             res.status(500).json({ message: "Error creating category" });
         }
-    },
+    }
+
 
 // Ajouter la route pour accepter l'image avec les autres données
 
