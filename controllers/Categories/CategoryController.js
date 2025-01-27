@@ -114,17 +114,7 @@ const CategoryController = {
 
     update: async (req, res) => {
         const { id } = req.params;
-
-        // Assurer que les données sont envoyées dans le bon format
         const { active, translations } = req.body;
-
-        // Parsing de JSON pour translations
-        let parsedTranslations;
-        try {
-            parsedTranslations = JSON.parse(translations);
-        } catch (error) {
-            return res.status(400).json({ message: 'Erreur lors du parsing des traductions.' });
-        }
 
         try {
             const category = await Category.findByPk(id);
@@ -133,15 +123,15 @@ const CategoryController = {
                 return res.status(404).json({ message: "Category not found" });
             }
 
-            // Mise à jour de `active`
+            // Mise à jour de la propriété `active`
             if (active !== undefined) {
                 category.active = active;
                 await category.save();
             }
 
             // Mise à jour des traductions
-            if (parsedTranslations && Array.isArray(parsedTranslations)) {
-                for (const lang of parsedTranslations) {
+            if (translations && Array.isArray(translations)) {
+                for (const lang of translations) {
                     const translation = await CategoryLang.findOne({
                         where: {
                             id_category: id,
@@ -150,8 +140,10 @@ const CategoryController = {
                     });
 
                     if (translation) {
+                        // Si la traduction existe, on la met à jour
                         await translation.update(lang);
                     } else {
+                        // Sinon, on la crée
                         await CategoryLang.create({
                             ...lang,
                             id_category: id,
@@ -165,10 +157,10 @@ const CategoryController = {
                 const newFileName = `${category.id_category}.jpg`;
                 const newFilePath = path.join('uploads/category', newFileName);
 
-                // Déplacer l'image dans le dossier
+                // Déplace l'image depuis le dossier temporaire vers le dossier de destination
                 fs.renameSync(req.file.path, newFilePath);
 
-                // Mettre à jour l'URL de l'image dans la base de données
+                // Met à jour l'URL de l'image dans la base de données
                 const thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/category/${newFileName}`;
                 await category.update({ thumbnail: thumbnailUrl });
             }
@@ -179,7 +171,6 @@ const CategoryController = {
             res.status(500).json({ message: "Error updating category" });
         }
     },
-
 
 
     delete: async (req, res) => {
