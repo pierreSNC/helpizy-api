@@ -2,7 +2,27 @@ const express = require("express");
 const CategoryController = require("../../controllers/Categories/CategoryController");
 
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
+// Configurer Multer pour gérer l'upload de fichiers
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // Assurer que le dossier existe
+        const dir = 'uploads/category';
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir); // Dossier de destination
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)); // Nom du fichier unique
+    },
+});
+
+const upload = multer({ storage: storage });
 /**
  * @swagger
  * tags:
@@ -121,7 +141,7 @@ router.get("/category/:id", CategoryController.getOne);
  *       201:
  *         description: Category successfully created
  */
-router.post("/category", CategoryController.create);
+router.post("/category", upload.single('thumbnail'), CategoryController.create);
 
 /**
  * @swagger
