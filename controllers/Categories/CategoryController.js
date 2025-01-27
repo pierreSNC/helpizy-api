@@ -89,12 +89,13 @@ const CategoryController = {
             const thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/category/${newFileName}`;
             await category.update({ thumbnail: thumbnailUrl });
 
+            // Vérification des traductions et création si présentes
             if (translations && Array.isArray(translations)) {
                 const categoryLangs = translations.map((lang) => ({
                     ...lang,
                     id_category: category.id_category,
                 }));
-                await CategoryLang.bulkCreate(categoryLangs);
+                await CategoryLang.bulkCreate(categoryLangs); // Création des traductions
             }
 
             res.status(201).json({ message: "Category created successfully", category });
