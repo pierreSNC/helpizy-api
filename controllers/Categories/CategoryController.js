@@ -42,10 +42,10 @@ const CategoryController = {
     },
 
     create: async (req, res) => {
-        const { active, translations } = req.body;
+        const { active, translations, thumbnail } = req.body;
 
         try {
-            const category = await Category.create({ active });
+            const category = await Category.create({ active, thumbnail });
 
             if (translations && Array.isArray(translations)) {
                 const categoryLangs = translations.map((lang) => ({
