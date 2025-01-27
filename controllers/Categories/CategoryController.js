@@ -1,4 +1,20 @@
 const { Category, CategoryLang } = require("../../models");
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/category/'); // Dossier où les fichiers seront stockés
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)); // Gérer le nom du fichier
+    },
+});
+
+const upload = multer({ storage: storage });
+
 
 const CategoryController = {
     getAll: async (req, res) => {
@@ -40,27 +56,44 @@ const CategoryController = {
             res.status(500).json({ message: "Error fetching category" });
         }
     },
-
+    
     create: async (req, res) => {
-        const { active, translations, thumbnail } = req.body;
+        const { active, translations } = req.body;
 
-        try {
-            const category = await Category.create({ active, thumbnail });
-
-            if (translations && Array.isArray(translations)) {
-                const categoryLangs = translations.map((lang) => ({
-                    ...lang,
-                    id_category: category.id_category,
-                }));
-                await CategoryLang.bulkCreate(categoryLangs);
+        // Assurer que `thumbnail` est bien un fichier et géré avec multer
+        upload.single('thumbnail')(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ message: 'Error uploading file', error: err.message });
             }
 
-            res.status(201).json({ message: "Category created successfully", category });
-        } catch (error) {
-            console.error("Error creating category:", error);
-            res.status(500).json({ message: "Error creating category" });
-        }
+            // Si un fichier a été uploadé, récupérer l'URL
+            let thumbnailUrl = '';
+            if (req.file) {
+                thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/category/${req.file.filename}`;
+            }
+
+            try {
+                const category = await Category.create({
+                    active,
+                    thumbnail: thumbnailUrl, // Utiliser l'URL du fichier téléchargé
+                });
+
+                if (translations && Array.isArray(translations)) {
+                    const categoryLangs = translations.map((lang) => ({
+                        ...lang,
+                        id_category: category.id_category,
+                    }));
+                    await CategoryLang.bulkCreate(categoryLangs);
+                }
+
+                res.status(201).json({ message: "Category created successfully", category });
+            } catch (error) {
+                console.error("Error creating category:", error);
+                res.status(500).json({ message: "Error creating category" });
+            }
+        });
     },
+
 
     update: async (req, res) => {
         const { id } = req.params;
