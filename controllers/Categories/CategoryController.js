@@ -67,19 +67,27 @@ const CategoryController = {
         const { active, translations } = req.body;
         const file = req.file; // Obtenir le fichier téléchargé par Multer
 
-        // Vérifier que le fichier a été téléchargé
         if (!file) {
             return res.status(400).json({ message: 'L\'image est requise.' });
         }
 
-        // Construire l'URL de l'image
-        const thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/category/${file.filename}`;
-
         try {
+            // Créer la catégorie sans l'image
             const category = await Category.create({
                 active,
-                thumbnail: thumbnailUrl, // Sauver l'URL de l'image
+                thumbnail: "", // On met une valeur vide pour le moment
             });
+
+            // Renommer l'image après la création de la catégorie avec l'ID de la catégorie
+            const newFileName = `${category.id_category}.jpg`;
+            const newFilePath = path.join('uploads/category', newFileName);
+
+            // Renommer le fichier (enregistrer l'image avec le nom basé sur l'ID de la catégorie)
+            fs.renameSync(file.path, newFilePath); // Renommer et déplacer le fichier
+
+            // Mettre à jour la catégorie avec l'URL de l'image
+            const thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/category/${newFileName}`;
+            await category.update({ thumbnail: thumbnailUrl });
 
             if (translations && Array.isArray(translations)) {
                 const categoryLangs = translations.map((lang) => ({
