@@ -183,4 +183,5 @@ router.post("/logout", UserController.logout);
  */
 router.get("/profile", authenticate, UserController.getProfile);
 
+router.get("/user/:id", UserController.getOne);
 module.exports = router;
