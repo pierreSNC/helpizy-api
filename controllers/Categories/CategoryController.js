@@ -157,6 +157,19 @@ const CategoryController = {
                 }
             }
 
+            // Si une image est envoyée
+            if (req.file) {
+                const newFileName = `${category.id_category}.jpg`;
+                const newFilePath = path.join('uploads/category', newFileName);
+
+                // Déplacer le fichier de l'upload temporaire vers le dossier final
+                fs.renameSync(req.file.path, newFilePath);
+
+                // Mettre à jour l'URL de l'image dans la base de données
+                const thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/category/${newFileName}`;
+                await category.update({ thumbnail: thumbnailUrl });
+            }
+
             res.status(200).json({ message: "Category updated successfully" });
         } catch (error) {
             console.error("Error updating category:", error);
