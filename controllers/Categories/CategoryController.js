@@ -65,6 +65,7 @@ const CategoryController = {
 
     create: async (req, res) => {
         const { active, translations } = req.body;
+        console.log(req.body)
         const file = req.file; // Obtenir le fichier téléchargé par Multer
 
         if (!file) {
@@ -75,7 +76,7 @@ const CategoryController = {
             // Créer la catégorie sans l'image
             const category = await Category.create({
                 active,
-                thumbnail: "", // On met une valeur vide pour le moment
+                thumbnail: "", // Mettre une valeur vide pour l'instant
             });
 
             // Renommer l'image après la création de la catégorie avec l'ID de la catégorie
@@ -89,13 +90,18 @@ const CategoryController = {
             const thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/category/${newFileName}`;
             await category.update({ thumbnail: thumbnailUrl });
 
-            // Vérification des traductions et création si présentes
+            // Vérifier que les traductions existent et les insérer dans la BDD
             if (translations && Array.isArray(translations)) {
                 const categoryLangs = translations.map((lang) => ({
                     ...lang,
                     id_category: category.id_category,
                 }));
-                await CategoryLang.bulkCreate(categoryLangs); // Création des traductions
+                console.log(categoryLangs)
+                // Créer les traductions dans la base de données
+                await CategoryLang.bulkCreate(categoryLangs);
+            } else {
+                // Si aucune traduction n'est envoyée, envoyer un message de validation
+                console.log("Aucune traduction envoyée");
             }
 
             res.status(201).json({ message: "Category created successfully", category });
@@ -104,6 +110,9 @@ const CategoryController = {
             res.status(500).json({ message: "Error creating category" });
         }
     },
+
+// Ajouter la route pour accepter l'image avec les autres données
+
 
 
     update: async (req, res) => {
