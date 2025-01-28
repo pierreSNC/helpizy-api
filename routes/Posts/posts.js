@@ -210,7 +210,7 @@ router.get("/post/:id", PostController.getOne);
  *       201:
  *         description: Post created successfully
  */
-router.post("/post", PostController.create);
+router.post("/post", upload.single('thumbnail'), PostController.create);
 
 /**
  * @swagger
