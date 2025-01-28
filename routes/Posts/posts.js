@@ -2,7 +2,27 @@ const express = require("express");
 const PostController = require("../../controllers/Posts/PostController");
 
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
+// Configurer Multer pour gérer l'upload de fichiers
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // Assurer que le dossier existe
+        const dir = 'uploads/category';
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir); // Dossier de destination
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)); // Nom du fichier unique
+    },
+});
+
+const upload = multer({ storage: storage });
 /**
  * @swagger
  * tags:
@@ -244,7 +264,7 @@ router.post("/post", PostController.create);
  *       200:
  *         description: Post updated successfully
  */
-router.patch("/post/:id", PostController.update);
+router.patch("/post/:id", upload.single('thumbnail'), PostController.update);
 
 /**
  * @swagger
