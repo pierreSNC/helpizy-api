@@ -23,20 +23,39 @@ const PostController = {
 
     // Créer un article
     create: async (req, res) => {
-        const { id_author, id_category, active, thumbnail, video_url, nb_like, translations } = req.body;
+        const { id_author, id_category, active, video_url, nb_like, translations } = req.body;
+
+        let parsedTranslations;
+        try {
+            parsedTranslations = JSON.parse(translations);
+        } catch (error) {
+            return res.status(400).json({ message: 'Erreur lors du parsing des traductions.' });
+        }
+
+        const file = req.file;
+        if (!file) {
+            return res.status(400).json({ message: 'Thumbnail image is required.' });
+        }
 
         try {
             const post = await Post.create({
                 id_author,
                 id_category,
                 active,
-                thumbnail,
                 video_url,
                 nb_like,
+                thumbnail: '', // Placeholder for now
             });
 
-            if (translations && Array.isArray(translations)) {
-                const postLangs = translations.map((lang) => ({
+            const newFileName = `${post.id_post}.jpg`;
+            const newFilePath = path.join('uploads/post', newFileName);
+            fs.renameSync(file.path, newFilePath);
+
+            const thumbnailUrl = `http://45.155.169.51/Helpizy-API/uploads/post/${newFileName}`;
+            await post.update({ thumbnail: thumbnailUrl });
+
+            if (parsedTranslations && Array.isArray(parsedTranslations)) {
+                const postLangs = parsedTranslations.map((lang) => ({
                     ...lang,
                     id_post: post.id_post,
                 }));
