@@ -28,7 +28,9 @@ const UserController = {
             });
 
             const token = jwt.sign(
-                { id_user: newUser.id_user, email: newUser.email, role: newUser.role },
+                {
+                    id_user: newUser.id_user, email: newUser.email, role: newUser.role, lastname: newUser.lastname, firstname: newUser.firstname,
+                },
                 SECRET_KEY,
                 { expiresIn: "1h" }
             );
@@ -67,7 +69,7 @@ const UserController = {
                 return res.status(401).json({ message: "Invalid credentials" });
             }
 
-            const token = jwt.sign({ id_user: user.id_user, email: user.email, role: user.role }, SECRET_KEY, { expiresIn: "1h" });
+            const token = jwt.sign({ id_user: user.id_user, email: user.email, role: user.role, lastname: user.lastname, firstname: user.firstname, }, SECRET_KEY, { expiresIn: "1h" });
 
             res.status(200).json({ message: "Login successful", token });
         } catch (error) {
