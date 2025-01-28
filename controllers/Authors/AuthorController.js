@@ -22,7 +22,7 @@ const AuthorController = {
 
         try {
             const author = await Author.findByPk(id, {
-                include: { association: "post" },
+                include: { association: "posts" },
             });
 
             if (!author) {

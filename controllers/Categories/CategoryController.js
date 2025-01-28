@@ -1,4 +1,4 @@
-const { Category, CategoryLang } = require("../../models");
+const { Category, CategoryLang, Post, PostLang } = require("../../models");
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         // Assurer que le dossier existe
         const dir = 'uploads/category';
-        if (!fs.existsSync(dir)){
+        if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }
         cb(null, dir); // Dossier de destination
@@ -48,6 +48,16 @@ const CategoryController = {
                     {
                         model: CategoryLang,
                         as: "translations",
+                    },
+                    {
+                        model: Post,
+                        as: "posts",
+                        include: [
+                            {
+                                model: PostLang,
+                                as: "translations",
+                            },
+                        ],
                     },
                 ],
             });
