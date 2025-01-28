@@ -183,7 +183,7 @@ router.post("/category", upload.single('thumbnail'), CategoryController.create);
  *       200:
  *         description: Category successfully updated
  */
-router.patch("/category/:id", CategoryController.update);
+router.patch("/category/:id", upload.single('thumbnail'), CategoryController.update);
 
 /**
  * @swagger
