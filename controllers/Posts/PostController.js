@@ -1,4 +1,5 @@
 const { Post, PostLang } = require("../../models");
+const { Op } = require("sequelize");
 
 const PostController = {
     getAll: async (req, res) => {
@@ -134,7 +135,39 @@ const PostController = {
             console.error("Error deleting post:", error);
             res.status(500).json({ message: "Error deleting post", error: error });
         }
-    }
+    },
+
+    // Chercher un article
+    search: async (req, res) => {
+        const { query } = req.query;
+
+        if (!query) {
+            return res.status(400).json({ message: "Query parameter 'query' is required" });
+        }
+
+        try {
+            const posts = await Post.findAll({
+                include: [
+                    {
+                        model: PostLang,
+                        as: "translations",
+                        where: {
+                            [Op.or]: [
+                                { title: { [Op.like]: `%${query}%` } },
+                                { excerpt: { [Op.like]: `%${query}%` } },
+                                { content: { [Op.like]: `%${query}%` } },
+                            ],
+                        },
+                    },
+                ],
+            });
+
+            return res.json(posts);
+        } catch (error) {
+            console.error("Error searching posts:", error);
+            return res.status(500).json({ message: "Error searching posts" });
+        }
+    },
 
 };
 

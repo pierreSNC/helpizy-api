@@ -32,6 +32,9 @@ Post.belongsTo(Author, { foreignKey: "id_author", as: "author" });
 QuestionLang.belongsTo(Question, { foreignKey: "id_question", as: "question" });
 Question.hasMany(QuestionLang, { foreignKey: "id_question", as: "translations" });
 
+Category.hasMany(Post, { foreignKey: "id_category", as: "posts" });
+Post.belongsTo(Category, { foreignKey: "id_category", as: "category" });
+
 module.exports = {
     sequelize,
     Post,
