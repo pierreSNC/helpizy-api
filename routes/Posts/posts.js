@@ -11,6 +11,69 @@ const router = express.Router();
 
 /**
  * @swagger
+ * /api/post/search:
+ *   get:
+ *     tags:
+ *       - Post
+ *     summary: Search posts
+ *     description: Search for posts whose translations match the given query string
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         required: true
+ *         description: The search term to look for in title, excerpt, or content
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Returns an array of posts matching the search query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id_post:
+ *                     type: integer
+ *                   id_author:
+ *                     type: integer
+ *                   id_category:
+ *                     type: string
+ *                   active:
+ *                     type: boolean
+ *                   thumbnail:
+ *                     type: string
+ *                   video_url:
+ *                     type: string
+ *                   nb_like:
+ *                     type: integer
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                   updatedAt:
+ *                     type: string
+ *                     format: date-time
+ *                   translations:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id_lang:
+ *                           type: integer
+ *                         title:
+ *                           type: string
+ *                         excerpt:
+ *                           type: string
+ *                         content:
+ *                           type: string
+ *                         additionnal_content:
+ *                           type: string
+ */
+router.get("/post/search", PostController.search)
+
+/**
+ * @swagger
  * /api/posts:
  *   get:
  *     tags:
@@ -202,5 +265,7 @@ router.patch("/post/:id", PostController.update);
  *         description: Post deleted successfully
  */
 router.delete("/post/:id", PostController.delete);
+
+
 
 module.exports = router;
