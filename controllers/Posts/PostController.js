@@ -23,7 +23,7 @@ const PostController = {
 
     // Créer un article
     create: async (req, res) => {
-        const { id_author, id_category, active, video_url, nb_like, translations } = req.body;
+        const { id_author, id_category, active, video_url, nb_like, is_premium, translations } = req.body;
 
         let parsedTranslations;
         try {
@@ -44,6 +44,7 @@ const PostController = {
                 active,
                 video_url,
                 nb_like,
+                is_premium,
                 thumbnail: '', // Placeholder for now
             });
 
@@ -97,12 +98,11 @@ const PostController = {
     // Mettre à jour un article
     update: async (req, res) => {
         const { id } = req.params;
-        const { id_author, id_category, active, video_url, nb_like, translations } = req.body;
+        const { id_author, id_category, active, video_url, nb_like, is_premium, translations } = req.body;
 
-        // Parse des traductions JSON
         let parsedTranslations;
         try {
-            parsedTranslations = JSON.parse(translations); // Convertir la chaîne JSON en tableau d'objets
+            parsedTranslations = JSON.parse(translations);
         } catch (error) {
             return res.status(400).json({ message: 'Erreur lors du parsing des traductions.' });
         }
@@ -121,6 +121,7 @@ const PostController = {
             post.active = active !== undefined ? active : post.active;
             post.video_url = video_url || post.video_url;
             post.nb_like = nb_like !== undefined ? nb_like : post.nb_like;
+            post.is_premium = is_premium !== undefined ? is_premium : post.is_premium;
 
             // Gestion de l'image (si un fichier est fourni)
             const file = req.file;

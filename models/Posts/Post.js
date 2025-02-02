@@ -34,6 +34,10 @@ module.exports = (sequelize) => {
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
             },
+            is_premium: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: 0,
+            },
         },
         {
             timestamps: true,
